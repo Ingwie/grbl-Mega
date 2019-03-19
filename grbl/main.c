@@ -46,6 +46,9 @@ int main(void)
   #ifdef USE_FEED_RATE_POT
   InitFeedratePot();
   #endif // USE_FEED_RATE_POT
+  #ifdef USE_STATUS_LED
+  InitStatusLeds();
+  #endif // USE_STATUS_LED
 
   memset(sys_position,0,sizeof(sys_position)); // Clear machine position.
   sei(); // Enable interrupts

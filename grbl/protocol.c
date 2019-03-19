@@ -490,6 +490,10 @@ void protocol_exec_rt_system()
     }
   }
 
+  #ifdef USE_STATUS_LED
+  UpdateStatusLeds();
+  #endif
+
   #ifdef DEBUG
     if (sys_rt_exec_debug) {
       report_realtime_debug();
