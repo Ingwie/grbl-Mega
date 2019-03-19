@@ -62,6 +62,7 @@
 #include "stepper.h"
 #include "jog.h"
 #include "sleep.h"
+#include "feed_rate_pot.h"
 
 // ---------------------------------------------------------------------------------------
 // COMPILE-TIME ERROR CHECKING OF DEFINE VALUES:

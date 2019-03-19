@@ -408,6 +408,10 @@ void protocol_exec_rt_system()
   }
 
   // Execute overrides.
+  #ifdef USE_FEED_RATE_POT
+  // Update feedratePotValue if last convertion is done
+  UpdateFeedratePotValue();
+  #endif
   rt_exec = sys_rt_exec_motion_override; // Copy volatile sys_rt_exec_motion_override
   if (rt_exec) {
     system_clear_exec_motion_overrides(); // Clear all motion override flags.
