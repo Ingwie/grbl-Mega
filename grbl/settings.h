@@ -28,6 +28,9 @@
   #define EEPROM_LINE_SIZE 80
 #endif
 
+#define LINEAR false
+#define ROTARY true
+
 // Version of the EEPROM data. Will be used to migrate existing data from older versions of Grbl
 // when firmware is upgraded. Always stored in byte 0 of eeprom
 #define SETTINGS_VERSION 10  // NOTE: Check settings_reset() when moving to next version.
@@ -66,9 +69,9 @@
 
 // Define EEPROM memory address location values for Grbl settings and parameters
 #define EEPROM_ADDR_GLOBAL         1U
-#define EEPROM_ADDR_PARAMETERS     512U
-#define EEPROM_ADDR_STARTUP_BLOCK  768U
-#define EEPROM_ADDR_BUILD_INFO     942U
+#define EEPROM_ADDR_PARAMETERS     1024U 	//512U
+#define EEPROM_ADDR_STARTUP_BLOCK  1536U	//768U
+#define EEPROM_ADDR_BUILD_INFO     2048U	//942U
 
 // Define EEPROM address indexing for coordinate parameters
 #define N_COORDINATE_SYSTEM 6  // Number of supported work coordinate systems (from index 1)
@@ -86,7 +89,7 @@
 // Global persistent settings (Stored from byte EEPROM_ADDR_GLOBAL onwards)
 typedef struct {
   // Axis settings
-  float steps_per_mm[N_AXIS];
+  float steps_per_unit[N_AXIS];
   float max_rate[N_AXIS];
   float acceleration[N_AXIS];
   float max_travel[N_AXIS];

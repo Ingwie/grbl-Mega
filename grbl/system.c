@@ -31,6 +31,20 @@ void system_init()
   #endif
   CONTROL_PCMSK |= CONTROL_MASK;  // Enable specific pins of the Pin Change Interrupt
   PCICR |= (1 << CONTROL_INT);   // Enable Pin Change Interrupt
+
+  // Micro stepping settings controls
+  #ifdef MICROSTEPS_XY
+    MSTEP_XY_DDR |= (MSTEP_MASK<<MSTEP_XY_OFFSET); // Configure as output pins
+    MSTEP_XY_PORT |= (STEPMODE_XY<<MSTEP_XY_OFFSET); // Set output pins
+  #endif
+  #ifdef MICROSTEPS_Z
+    MSTEP_Z_DDR |= (MSTEP_MASK<<MSTEP_Z_OFFSET); // Configure as output pins
+    MSTEP_Z_PORT |= (STEPMODE_Z<<MSTEP_Z_OFFSET); // Set output pins
+  #endif
+  #ifdef MICROSTEPS_A
+    MSTEP_A_DDR |= (MSTEP_MASK<<MSTEP_A_OFFSET); // Configure as output pins
+    MSTEP_A_PORT |= (STEPMODE_A<<MSTEP_A_OFFSET); // Set output pins
+  #endif
 }
 
 
@@ -67,10 +81,10 @@ ISR(CONTROL_INT_vect)
     } else if (bit_istrue(pin,CONTROL_PIN_INDEX_CYCLE_START)) {
       bit_true(sys_rt_exec_state, EXEC_CYCLE_START);
     } else if (bit_istrue(pin,CONTROL_PIN_INDEX_FEED_HOLD)) {
-      bit_true(sys_rt_exec_state, EXEC_FEED_HOLD); 
+      bit_true(sys_rt_exec_state, EXEC_FEED_HOLD);
     } else if (bit_istrue(pin,CONTROL_PIN_INDEX_SAFETY_DOOR)) {
       bit_true(sys_rt_exec_state, EXEC_SAFETY_DOOR);
-    } 
+    }
   }
 }
 
@@ -176,6 +190,7 @@ uint8_t system_execute_line(char *line)
                 case 'X': mc_homing_cycle(HOMING_CYCLE_X); break;
                 case 'Y': mc_homing_cycle(HOMING_CYCLE_Y); break;
                 case 'Z': mc_homing_cycle(HOMING_CYCLE_Z); break;
+                //case 'A': mc_homing_cycle(HOMING_CYCLE_A); break; // no homing
                 default: return(STATUS_INVALID_STATEMENT);
               }
           #endif
@@ -283,14 +298,14 @@ float system_convert_axis_steps_to_mpos(int32_t *steps, uint8_t idx)
   float pos;
   #ifdef COREXY
     if (idx==X_AXIS) {
-      pos = (float)system_convert_corexy_to_x_axis_steps(steps) / settings.steps_per_mm[idx];
+      pos = (float)system_convert_corexy_to_x_axis_steps(steps) / settings.steps_per_unit[idx];
     } else if (idx==Y_AXIS) {
-      pos = (float)system_convert_corexy_to_y_axis_steps(steps) / settings.steps_per_mm[idx];
+      pos = (float)system_convert_corexy_to_y_axis_steps(steps) / settings.steps_per_unit[idx];
     } else {
-      pos = steps[idx]/settings.steps_per_mm[idx];
+      pos = steps[idx]/settings.steps_per_unit[idx];
     }
   #else
-    pos = steps[idx]/settings.steps_per_mm[idx];
+    pos = steps[idx]/settings.steps_per_unit[idx];
   #endif
   return(pos);
 }
@@ -323,7 +338,7 @@ void system_convert_array_steps_to_mpos(float *position, int32_t *steps)
 uint8_t system_check_travel_limits(float *target)
 {
   uint8_t idx;
-  for (idx=0; idx<N_AXIS; idx++) {
+  for (idx=0; idx<N_AXIS_XYZ; idx++) {
     #ifdef HOMING_FORCE_SET_ORIGIN
       // When homing forced set origin is enabled, soft limits checks need to account for directionality.
       // NOTE: max_travel is stored as negative

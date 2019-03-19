@@ -19,13 +19,18 @@
 */
 
 /* The defaults.h file serves as a central default settings selector for different machine
-   types, from DIY CNC mills to CNC conversions of off-the-shelf machines. The settings 
+   types, from DIY CNC mills to CNC conversions of off-the-shelf machines. The settings
    files listed here are supplied by users, so your results may vary. However, this should
    give you a good starting point as you get to know your machine and tweak the settings for
    your nefarious needs.
    NOTE: Ensure one and only one of these DEFAULTS_XXX values is defined in config.h */
 
 #ifndef defaults_h
+
+#ifdef DEFAULTS_MAMACHINE
+  // Grbl  default settings for My machine
+  #include "ma_machine.h"
+#endif
 
 #ifdef DEFAULTS_GENERIC
   // Grbl generic default settings. Should work across different machines.
@@ -84,10 +89,10 @@
   #define DEFAULT_Y_MAX_TRAVEL 125.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_Z_MAX_TRAVEL 170.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_SPINDLE_RPM_MAX 2800.0 // rpm
-  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm  
+  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
-  #define DEFAULT_DIRECTION_INVERT_MASK ((1<<Y_AXIS)|(1<<Z_AXIS))  
+  #define DEFAULT_DIRECTION_INVERT_MASK ((1<<Y_AXIS)|(1<<Z_AXIS))
   #define DEFAULT_STEPPER_IDLE_LOCK_TIME 25 // msec (0-254, 255 keeps steppers enabled)
   #define DEFAULT_STATUS_REPORT_MASK 1 // MPos enabled
   #define DEFAULT_JUNCTION_DEVIATION 0.01 // mm
@@ -132,7 +137,7 @@
   #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
-  #define DEFAULT_DIRECTION_INVERT_MASK ((1<<Y_AXIS)|(1<<Z_AXIS))  
+  #define DEFAULT_DIRECTION_INVERT_MASK ((1<<Y_AXIS)|(1<<Z_AXIS))
   #define DEFAULT_STEPPER_IDLE_LOCK_TIME 255 // msec (0-254, 255 keeps steppers enabled)
   #define DEFAULT_STATUS_REPORT_MASK 1 // MPos enabled
   #define DEFAULT_JUNCTION_DEVIATION 0.02 // mm
@@ -149,7 +154,7 @@
   #define DEFAULT_HOMING_FEED_RATE 25.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 250.0 // mm/min
   #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
-  #define DEFAULT_HOMING_PULLOFF 1.0 // mm  
+  #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 #endif
 
 #ifdef DEFAULTS_SHAPEOKO_2
@@ -174,7 +179,7 @@
   #define DEFAULT_Y_MAX_TRAVEL 290.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_Z_MAX_TRAVEL 100.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_SPINDLE_RPM_MAX 10000.0 // rpm
-  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm  
+  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
   #define DEFAULT_DIRECTION_INVERT_MASK ((1<<X_AXIS)|(1<<Z_AXIS))
@@ -184,7 +189,7 @@
   #define DEFAULT_ARC_TOLERANCE 0.002 // mm
   #define DEFAULT_REPORT_INCHES 0 // false
   #define DEFAULT_INVERT_ST_ENABLE 0 // false
-  #define DEFAULT_INVERT_LIMIT_PINS 0 // false  
+  #define DEFAULT_INVERT_LIMIT_PINS 0 // false
   #define DEFAULT_SOFT_LIMIT_ENABLE 0 // false
   #define DEFAULT_HARD_LIMIT_ENABLE 0  // false
   #define DEFAULT_INVERT_PROBE_PIN 0 // false
@@ -194,7 +199,7 @@
   #define DEFAULT_HOMING_FEED_RATE 25.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 250.0 // mm/min
   #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
-  #define DEFAULT_HOMING_PULLOFF 1.0 // mm  
+  #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 #endif
 
 #ifdef DEFAULTS_SHAPEOKO_3
@@ -238,7 +243,7 @@
   #define DEFAULT_HOMING_FEED_RATE 100.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 1000.0 // mm/min
   #define DEFAULT_HOMING_DEBOUNCE_DELAY 25 // msec (0-65k)
-  #define DEFAULT_HOMING_PULLOFF 5.0 // mm  
+  #define DEFAULT_HOMING_PULLOFF 5.0 // mm
 #endif
 
 #ifdef DEFAULTS_X_CARVE_500MM
@@ -263,7 +268,7 @@
   #define DEFAULT_Y_MAX_TRAVEL 290.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_Z_MAX_TRAVEL 100.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_SPINDLE_RPM_MAX 10000.0 // rpm
-  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm  
+  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
   #define DEFAULT_DIRECTION_INVERT_MASK ((1<<X_AXIS)|(1<<Y_AXIS))
@@ -283,7 +288,7 @@
   #define DEFAULT_HOMING_FEED_RATE 25.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 750.0 // mm/min
   #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
-  #define DEFAULT_HOMING_PULLOFF 1.0 // mm 
+  #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 #endif
 
 #ifdef DEFAULTS_X_CARVE_1000MM
@@ -308,7 +313,7 @@
   #define DEFAULT_Y_MAX_TRAVEL 790.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_Z_MAX_TRAVEL 100.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_SPINDLE_RPM_MAX 10000.0 // rpm
-  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm  
+  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
   #define DEFAULT_DIRECTION_INVERT_MASK ((1<<X_AXIS)|(1<<Y_AXIS))
@@ -328,7 +333,7 @@
   #define DEFAULT_HOMING_FEED_RATE 25.0 // mm/min
   #define DEFAULT_HOMING_SEEK_RATE 750.0 // mm/min
   #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
-  #define DEFAULT_HOMING_PULLOFF 1.0 // mm 
+  #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 #endif
 
 #ifdef DEFAULTS_ZEN_TOOLWORKS_7x7
@@ -351,7 +356,7 @@
   #define DEFAULT_Y_MAX_TRAVEL 180.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_Z_MAX_TRAVEL 150.0 // mm NOTE: Must be a positive value.
   #define DEFAULT_SPINDLE_RPM_MAX 10000.0 // rpm
-  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm  
+  #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
   #define DEFAULT_STEP_PULSE_MICROSECONDS 10
   #define DEFAULT_STEPPING_INVERT_MASK 0
   #define DEFAULT_DIRECTION_INVERT_MASK ((1<<Y_AXIS))
@@ -361,7 +366,7 @@
   #define DEFAULT_ARC_TOLERANCE 0.002 // mm
   #define DEFAULT_REPORT_INCHES 0 // false
   #define DEFAULT_INVERT_ST_ENABLE 0 // false
-  #define DEFAULT_INVERT_LIMIT_PINS 0 // false  
+  #define DEFAULT_INVERT_LIMIT_PINS 0 // false
   #define DEFAULT_SOFT_LIMIT_ENABLE 0 // false
   #define DEFAULT_HARD_LIMIT_ENABLE 0  // false
   #define DEFAULT_INVERT_PROBE_PIN 0 // false

@@ -97,7 +97,9 @@ typedef struct {
   // Used by the bresenham line algorithm
   uint32_t counter_x,        // Counter variables for the bresenham line tracer
            counter_y,
-           counter_z;
+           counter_z,
+           counter_a;
+
   #ifdef STEP_PULSE_DELAY
     #ifdef DEFAULTS_RAMPS_BOARD
       uint8_t step_bits[N_AXIS];  // Stores out_bits output to complete the step pulse delay
@@ -176,7 +178,7 @@ typedef struct {
   float decelerate_after; // Deceleration ramp start measured from end of block (mm)
 
   float inv_rate;    // Used by PWM laser mode to speed up segment calculations.
-  uint16_t current_spindle_pwm; 
+  uint16_t current_spindle_pwm;
 } st_prep_t;
 static st_prep_t prep;
 
@@ -232,7 +234,7 @@ void st_wake_up()
   #ifdef DEFAULTS_RAMPS_BOARD
     int idx;
   #endif // Ramps Board
-  
+
   // Enable stepper drivers.
   #ifdef DEFAULTS_RAMPS_BOARD
     if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) {
@@ -249,9 +251,23 @@ void st_wake_up()
       st.step_outbits[idx] = step_port_invert_mask[idx];
     }
   #else
-    if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
-    else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
-    // Initialize stepper output bits to ensure first ISR call does not step.
+  if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE))
+    {
+      STEPPERS_DISABLE_PORT |= STEPPERS_DISABLE_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_X_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_X_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Y_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_Y_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Z_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_Z_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_A_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_A_MASK;
+    }
+  else
+    {
+      STEPPERS_DISABLE_PORT &= ~STEPPERS_DISABLE_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_X_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_X_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Y_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_Y_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Z_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_Z_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_A_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_A_MASK;
+    }
+  // Initialize stepper output bits to ensure first ISR call does not step.
     st.step_outbits = step_port_invert_mask;
   #endif // Ramps Board
 
@@ -280,7 +296,7 @@ void st_go_idle()
   busy = false;
 
   // Set stepper driver idle state, disabled or enabled, depending on settings and circumstances.
-  bool pin_state = false; // Keep enabled.
+  uint8_t pin_state = false; // Keep enabled.
   if (((settings.stepper_idle_lock_time != 0xff) || sys_rt_exec_alarm || sys.state == STATE_SLEEP) && sys.state != STATE_HOMING) {
     // Force stepper dwell to lock axes for a defined amount of time to ensure the axes come to a complete
     // stop and not drift from residual inertial forces at the end of the last movement.
@@ -299,8 +315,22 @@ void st_go_idle()
       STEPPER_DISABLE_PORT(2) &= ~(1 << STEPPER_DISABLE_BIT(2));
     }
   #else
-    if (pin_state) { STEPPERS_DISABLE_PORT |= (1<<STEPPERS_DISABLE_BIT); }
-    else { STEPPERS_DISABLE_PORT &= ~(1<<STEPPERS_DISABLE_BIT); }
+    if (pin_state)
+    {
+      STEPPERS_DISABLE_PORT |= STEPPERS_DISABLE_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_X_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_X_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Y_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_Y_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Z_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_Z_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_A_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_DISABLE_AXIS_A_MASK;
+    }
+  else
+    {
+      STEPPERS_DISABLE_PORT &= ~STEPPERS_DISABLE_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_X_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_X_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Y_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_Y_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Z_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_Z_MASK;
+      if (!(STEPPERS_DISABLE_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_A_MASK)) STEPPERS_DISABLE_ALL_AXIS_PORT &= ~STEPPERS_DISABLE_AXIS_A_MASK;
+    }
   #endif // Ramps Board
 }
 
@@ -381,7 +411,7 @@ ISR(TIMER1_COMPA_vect)
       STEP_PORT(1) = (STEP_PORT(1) & ~(1 << STEP_BIT(1))) | st.step_outbits[1];
       STEP_PORT(2) = (STEP_PORT(2) & ~(1 << STEP_BIT(2))) | st.step_outbits[2];
     #endif
-  #else  
+  #else
     #ifdef STEP_PULSE_DELAY
       st.step_bits = (STEP_PORT & ~STEP_MASK) | st.step_outbits; // Store out_bits to prevent overwriting.
     #else  // Normal operation
@@ -420,7 +450,7 @@ ISR(TIMER1_COMPA_vect)
         st.exec_block = &st_block_buffer[st.exec_block_index];
 
         // Initialize Bresenham line and distance counters
-        st.counter_x = st.counter_y = st.counter_z = (st.exec_block->step_event_count >> 1);
+        st.counter_x = st.counter_y = st.counter_z= st.counter_a = (st.exec_block->step_event_count >> 1);
       }
       #ifdef DEFAULTS_RAMPS_BOARD
         for (i = 0; i < N_AXIS; i++)
@@ -434,6 +464,7 @@ ISR(TIMER1_COMPA_vect)
         st.steps[X_AXIS] = st.exec_block->steps[X_AXIS] >> st.exec_segment->amass_level;
         st.steps[Y_AXIS] = st.exec_block->steps[Y_AXIS] >> st.exec_segment->amass_level;
         st.steps[Z_AXIS] = st.exec_block->steps[Z_AXIS] >> st.exec_segment->amass_level;
+        st.steps[A_AXIS] = st.exec_block->steps[A_AXIS] >> st.exec_segment->amass_level;
       #endif
 
       // Set real-time spindle output as segment is loaded, just prior to the first step.
@@ -523,7 +554,17 @@ ISR(TIMER1_COMPA_vect)
       else { sys_position[Z_AXIS]++; }
     }
   #endif // Ramps Board
-
+  #ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+    st.counter_a += st.steps[A_AXIS];
+  #else
+    st.counter_a += st.exec_block->steps[A_AXIS];
+  #endif
+  if (st.counter_a > st.exec_block->step_event_count) {
+    st.step_outbits |= (1<<A_STEP_BIT);
+    st.counter_a -= st.exec_block->step_event_count;
+    if (st.exec_block->direction_bits & (1<<A_DIRECTION_BIT)) { sys_position[A_AXIS]--; }
+    else { sys_position[A_AXIS]++; }
+    }
   // During a homing cycle, lock out and prevent desired axes from moving.
   #ifdef DEFAULTS_RAMPS_BOARD
     for (i = 0; i < N_AXIS; i++)
@@ -637,13 +678,13 @@ void st_reset()
     for (idx=0; idx<N_AXIS; idx++) {
       st.dir_outbits[idx] = dir_port_invert_mask[idx]; // Initialize direction bits to default.
     }
-  
+
     STEP_PORT(0) = (STEP_PORT(0) & ~(1 << STEP_BIT(0))) | step_port_invert_mask[0];
     DIRECTION_PORT(0) = (DIRECTION_PORT(0) & ~(1 << DIRECTION_BIT(0))) | dir_port_invert_mask[0];
-  
+
     STEP_PORT(1) = (STEP_PORT(1) & ~(1 << STEP_BIT(1))) | step_port_invert_mask[1];
     DIRECTION_PORT(1) = (DIRECTION_PORT(1) & ~(1 << DIRECTION_BIT(1))) | dir_port_invert_mask[1];
-  
+
     STEP_PORT(2) = (STEP_PORT(2) & ~(1 << STEP_BIT(2))) | step_port_invert_mask[2];
     DIRECTION_PORT(2) = (DIRECTION_PORT(2) & ~(1 << DIRECTION_BIT(2))) | dir_port_invert_mask[2];
   #else
@@ -664,18 +705,22 @@ void stepper_init()
     STEP_DDR(0) |= 1<<STEP_BIT(0);
     STEP_DDR(1) |= 1<<STEP_BIT(1);
     STEP_DDR(2) |= 1<<STEP_BIT(2);
-  
+
     STEPPER_DISABLE_DDR(0) |= 1<<STEPPER_DISABLE_BIT(0);
     STEPPER_DISABLE_DDR(1) |= 1<<STEPPER_DISABLE_BIT(1);
     STEPPER_DISABLE_DDR(2) |= 1<<STEPPER_DISABLE_BIT(2);
-  
+
     DIRECTION_DDR(0) |= 1<<DIRECTION_BIT(0);
     DIRECTION_DDR(1) |= 1<<DIRECTION_BIT(1);
     DIRECTION_DDR(2) |= 1<<DIRECTION_BIT(2);
   #else
     STEP_DDR |= STEP_MASK;
-    STEPPERS_DISABLE_DDR |= 1<<STEPPERS_DISABLE_BIT;
     DIRECTION_DDR |= DIRECTION_MASK;
+  // Configure enable/disable pins
+    STEPPERS_DISABLE_DDR |= STEPPERS_DISABLE_MASK;
+    STEPPERS_DISABLE_ALL_AXIS_DDR |= STEPPERS_DISABLE_ALL_AXIS_MASK; // steppers enable ouput
+    STEPPERS_DISABLE_ALL_AXIS_DDR &= ~STEPPERS_IS_PRESENT_ALL_AXIS_MASK; // axis presence input
+    STEPPERS_DISABLE_ALL_AXIS_PORT |= STEPPERS_IS_PRESENT_ALL_AXIS_MASK; // axis presence input internal pull-up resistors enabled
   #endif // Ramps Board
 
   // Configure Timer 1: Stepper Driver Interrupt
@@ -836,15 +881,15 @@ void st_prep_buffer()
         } else {
           prep.current_speed = sqrt(pl_block->entry_speed_sqr);
         }
-        
+
         // Setup laser mode variables. PWM rate adjusted motions will always complete a motion with the
-        // spindle off. 
+        // spindle off.
         st_prep_block->is_pwm_rate_adjusted = false;
         if (settings.flags & BITFLAG_LASER_MODE) {
-          if (pl_block->condition & PL_COND_FLAG_SPINDLE_CCW) { 
+          if (pl_block->condition & PL_COND_FLAG_SPINDLE_CCW) {
             // Pre-compute inverse programmed rate to speed up PWM updating per step segment.
             prep.inv_rate = 1.0/pl_block->programmed_rate;
-            st_prep_block->is_pwm_rate_adjusted = true; 
+            st_prep_block->is_pwm_rate_adjusted = true;
           }
         }
       }
@@ -939,10 +984,10 @@ void st_prep_buffer()
 					prep.maximum_speed = prep.exit_speed;
 				}
 			}
-      
+
       bit_true(sys.step_control, STEP_CONTROL_UPDATE_SPINDLE_PWM); // Force update whenever updating block.
     }
-    
+
     // Initialize new segment
     segment_t *prep_segment = &segment_buffer[segment_buffer_head];
 
@@ -1051,16 +1096,16 @@ void st_prep_buffer()
     /* -----------------------------------------------------------------------------------
       Compute spindle speed PWM output for step segment
     */
-    
+
     if (st_prep_block->is_pwm_rate_adjusted || (sys.step_control & STEP_CONTROL_UPDATE_SPINDLE_PWM)) {
       if (pl_block->condition & (PL_COND_FLAG_SPINDLE_CW | PL_COND_FLAG_SPINDLE_CCW)) {
         float rpm = pl_block->spindle_speed;
-        // NOTE: Feed and rapid overrides are independent of PWM value and do not alter laser power/rate.        
+        // NOTE: Feed and rapid overrides are independent of PWM value and do not alter laser power/rate.
         if (st_prep_block->is_pwm_rate_adjusted) { rpm *= (prep.current_speed * prep.inv_rate); }
         // If current_speed is zero, then may need to be rpm_min*(100/MAX_SPINDLE_SPEED_OVERRIDE)
         // but this would be instantaneous only and during a motion. May not matter at all.
         prep.current_spindle_pwm = spindle_compute_pwm_value(rpm);
-      } else { 
+      } else {
         sys.spindle_speed = 0.0;
         prep.current_spindle_pwm = SPINDLE_PWM_OFF_VALUE;
       }
@@ -1068,7 +1113,7 @@ void st_prep_buffer()
     }
     prep_segment->spindle_pwm = prep.current_spindle_pwm; // Reload segment PWM value
 
-    
+
     /* -----------------------------------------------------------------------------------
        Compute segment step rate, steps to execute, and apply necessary rate corrections.
        NOTE: Steps are computed by direct scalar conversion of the millimeter distance

@@ -41,7 +41,7 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
   c = *ptr++;
 
   // Capture initial positive/minus character
-  bool isnegative = false;
+  uint8_t isnegative = false;
   if (c == '-') {
     isnegative = true;
     c = *ptr++;
@@ -53,7 +53,7 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
   uint32_t intval = 0;
   int8_t exp = 0;
   uint8_t ndigit = 0;
-  bool isdecimal = false;
+  uint8_t isdecimal = false;
   while(1) {
     c -= '0';
     if (c <= 9) {

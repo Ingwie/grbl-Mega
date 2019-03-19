@@ -36,10 +36,12 @@ static void report_util_feedback_line_feed() { serial_write(']'); report_util_li
 static void report_util_gcode_modes_G() { printPgmString(PSTR(" G")); }
 static void report_util_gcode_modes_M() { printPgmString(PSTR(" M")); }
 // static void report_util_comment_line_feed() { serial_write(')'); report_util_line_feed(); }
+
 static void report_util_axis_values(float *axis_value) {
   uint8_t idx;
   for (idx=0; idx<N_AXIS; idx++) {
-    printFloat_CoordValue(axis_value[idx]);
+      if (idx < N_AXIS_XYZ) printFloat_CoordValue(axis_value[idx], LINEAR);
+      else printFloat_CoordValue(axis_value[idx], ROTARY);
     if (idx < (N_AXIS-1)) { serial_write(','); }
   }
 }
@@ -50,7 +52,7 @@ static void report_util_setting_string(uint8_t n) {
   serial_write('(');
   switch(n) {
     case 0: printPgmString(PSTR("stp pulse")); break;
-    case 1: printPgmString(PSTR("idl delay")); break; 
+    case 1: printPgmString(PSTR("idl delay")); break;
     case 2: printPgmString(PSTR("stp inv")); break;
     case 3: printPgmString(PSTR("dir inv")); break;
     case 4: printPgmString(PSTR("stp en inv")); break;
@@ -91,13 +93,14 @@ static void report_util_setting_string(uint8_t n) {
 }
 */
 
-static void report_util_uint8_setting(uint8_t n, int val) { 
-  report_util_setting_prefix(n); 
-  print_uint8_base10(val); 
-  report_util_line_feed(); // report_util_setting_string(n); 
+static void report_util_uint8_setting(uint8_t n, int val) {
+  report_util_setting_prefix(n);
+  print_uint8_base10(val);
+  report_util_line_feed(); // report_util_setting_string(n);
 }
-static void report_util_float_setting(uint8_t n, float val, uint8_t n_decimal) { 
-  report_util_setting_prefix(n); 
+
+static void report_util_float_setting(uint8_t n, float val, uint8_t n_decimal) {
+  report_util_setting_prefix(n);
   printFloat(val,n_decimal);
   report_util_line_feed(); // report_util_setting_string(n);
 }
@@ -174,7 +177,7 @@ void report_init_message()
 
 // Grbl help message
 void report_grbl_help() {
-  printPgmString(PSTR("[HLP:$$ $# $G $I $N $x=val $Nx=line $J=line $SLP $C $X $H ~ ! ? ctrl-x]\r\n"));    
+  printPgmString(PSTR("[HLP:$$ $# $G $I $N $x=val $Nx=line $J=line $SLP $C $X $H ~ ! ? ctrl-x]\r\n"));
 }
 
 
@@ -210,7 +213,7 @@ void report_grbl_settings() {
   for (set_idx=0; set_idx<AXIS_N_SETTINGS; set_idx++) {
     for (idx=0; idx<N_AXIS; idx++) {
       switch (set_idx) {
-        case 0: report_util_float_setting(val+idx,settings.steps_per_mm[idx],N_DECIMAL_SETTINGVALUE); break;
+        case 0: report_util_float_setting(val+idx,settings.steps_per_unit[idx],N_DECIMAL_SETTINGVALUE); break;
         case 1: report_util_float_setting(val+idx,settings.max_rate[idx],N_DECIMAL_SETTINGVALUE); break;
         case 2: report_util_float_setting(val+idx,settings.acceleration[idx]/(60*60),N_DECIMAL_SETTINGVALUE); break;
         case 3: report_util_float_setting(val+idx,-settings.max_travel[idx],N_DECIMAL_SETTINGVALUE); break;
@@ -261,7 +264,7 @@ void report_ngc_parameters()
   report_util_axis_values(gc_state.coord_offset);
   report_util_feedback_line_feed();
   printPgmString(PSTR("[TLO:")); // Print tool length offset value
-  printFloat_CoordValue(gc_state.tool_length_offset);
+  printFloat_CoordValue(gc_state.tool_length_offset, LINEAR);
   report_util_feedback_line_feed();
   report_probe_parameters(); // Print probe parameters. Not persistent in memory.
 }
@@ -298,8 +301,8 @@ void report_gcode_modes()
     switch (gc_state.modal.program_flow) {
       case PROGRAM_FLOW_PAUSED : serial_write('0'); break;
       // case PROGRAM_FLOW_OPTIONAL_STOP : serial_write('1'); break; // M1 is ignored and not supported.
-      case PROGRAM_FLOW_COMPLETED_M2 : 
-      case PROGRAM_FLOW_COMPLETED_M30 : 
+      case PROGRAM_FLOW_COMPLETED_M2 :
+      case PROGRAM_FLOW_COMPLETED_M30 :
         print_uint8_base10(gc_state.modal.program_flow);
         break;
     }
@@ -319,17 +322,17 @@ void report_gcode_modes()
   } else { serial_write('9'); }
 
   #ifdef ENABLE_PARKING_OVERRIDE_CONTROL
-    if (sys.override_ctrl == OVERRIDE_PARKING_MOTION) { 
+    if (sys.override_ctrl == OVERRIDE_PARKING_MOTION) {
       report_util_gcode_modes_M();
       print_uint8_base10(56);
     }
   #endif
-  
+
   printPgmString(PSTR(" T"));
   print_uint8_base10(gc_state.tool);
 
   printPgmString(PSTR(" F"));
-  printFloat_RateValue(gc_state.feed_rate);
+  printFloat_RateValue(gc_state.feed_rate, LINEAR);
 
   printPgmString(PSTR(" S"));
   printFloat(gc_state.spindle_speed,N_DECIMAL_RPMVALUE);
@@ -530,7 +533,7 @@ void report_realtime_status()
   // Report realtime feed speed
   #ifdef REPORT_FIELD_CURRENT_FEED_SPEED
     printPgmString(PSTR("|FS:"));
-    printFloat_RateValue(st_get_realtime_rate());
+    printFloat_RateValue(st_get_realtime_rate(), LINEAR);
     serial_write(',');
     printFloat(sys.spindle_speed,N_DECIMAL_RPMVALUE);
   #endif
@@ -546,6 +549,7 @@ void report_realtime_status()
         if (bit_istrue(lim_pin_state,bit(X_AXIS))) { serial_write('X'); }
         if (bit_istrue(lim_pin_state,bit(Y_AXIS))) { serial_write('Y'); }
         if (bit_istrue(lim_pin_state,bit(Z_AXIS))) { serial_write('Z'); }
+        if (bit_istrue(lim_pin_state,bit(A_AXIS))) { serial_write('A'); }
       }
       if (ctrl_pin_state) {
         if (bit_istrue(ctrl_pin_state,CONTROL_PIN_INDEX_SAFETY_DOOR)) { serial_write('D'); }
@@ -591,7 +595,7 @@ void report_realtime_status()
         }
         if (cl_state & COOLANT_STATE_FLOOD) { serial_write('F'); }
         if (cl_state & COOLANT_STATE_MIST) { serial_write('M'); }
-      }  
+      }
     }
   #endif
 

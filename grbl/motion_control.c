@@ -85,7 +85,7 @@ void mc_line(float *target, plan_line_data_t *pl_data)
 // of each segment is configured in settings.arc_tolerance, which is defined to be the maximum normal
 // distance from segment to the circle when the end points both lie on the circle.
 void mc_arc(float *target, plan_line_data_t *pl_data, float *position, float *offset, float radius,
-  uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc)
+  uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t axis_rotary, uint8_t is_clockwise_arc)
 {
   float center_axis0 = position[axis_0] + offset[axis_0];
   float center_axis1 = position[axis_1] + offset[axis_1];
@@ -113,13 +113,14 @@ void mc_arc(float *target, plan_line_data_t *pl_data, float *position, float *of
     // Multiply inverse feed_rate to compensate for the fact that this movement is approximated
     // by a number of discrete segments. The inverse feed_rate should be correct for the sum of
     // all segments.
-    if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME) { 
-      pl_data->feed_rate *= segments; 
+    if (pl_data->condition & PL_COND_FLAG_INVERSE_TIME) {
+      pl_data->feed_rate *= segments;
       bit_false(pl_data->condition,PL_COND_FLAG_INVERSE_TIME); // Force as feed absolute mode over arc segments.
     }
-    
+
     float theta_per_segment = angular_travel/segments;
     float linear_per_segment = (target[axis_linear] - position[axis_linear])/segments;
+    float rotary_per_segment = (target[axis_rotary] - position[axis_rotary])/segments;
 
     /* Vector rotation by transformation matrix: r is the original vector, r_T is the rotated vector,
        and phi is the angle of rotation. Solution approach by Jens Geisler.
@@ -179,6 +180,7 @@ void mc_arc(float *target, plan_line_data_t *pl_data, float *position, float *of
       position[axis_0] = center_axis0 + r_axis0;
       position[axis_1] = center_axis1 + r_axis1;
       position[axis_linear] += linear_per_segment;
+      position[axis_rotary] += rotary_per_segment;
 
       mc_line(position, pl_data);
 
@@ -220,7 +222,7 @@ void mc_homing_cycle(uint8_t cycle_mask)
 
   // -------------------------------------------------------------------------------------
   // Perform homing routine. NOTE: Special motion case. Only system reset works.
-  
+
   #ifdef HOMING_SINGLE_AXIS_COMMANDS
     if (cycle_mask) { limits_go_home(cycle_mask); } // Perform homing cycle based on mask.
     else
@@ -379,7 +381,7 @@ void mc_reset()
     // violated, by which, all bets are off.
     if ((sys.state & (STATE_CYCLE | STATE_HOMING | STATE_JOG)) ||
     		(sys.step_control & (STEP_CONTROL_EXECUTE_HOLD | STEP_CONTROL_EXECUTE_SYS_MOTION))) {
-      if (sys.state == STATE_HOMING) { 
+      if (sys.state == STATE_HOMING) {
         if (!sys_rt_exec_alarm) {system_set_exec_alarm(EXEC_ALARM_HOMING_FAIL_RESET); }
       } else { system_set_exec_alarm(EXEC_ALARM_ABORT_CYCLE); }
       st_go_idle(); // Force kill steppers. Position has likely been lost.

@@ -4,7 +4,7 @@
 
   Copyright (c) 2011-2016 Sungeun K. Jeon for Gnea Research LLC
   Copyright (c) 2009-2011 Simen Svale Skogsrud
-  
+
   Grbl is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -31,7 +31,7 @@
 #define HOMING_CYCLE_X    bit(X_AXIS)
 #define HOMING_CYCLE_Y    bit(Y_AXIS)
 #define HOMING_CYCLE_Z    bit(Z_AXIS)
-
+#define HOMING_CYCLE_A    bit(A_AXIS) // not used
 
 // Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 // unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in
@@ -43,7 +43,7 @@ void mc_line(float *target, plan_line_data_t *pl_data);
 // the direction of helical travel, radius == circle radius, is_clockwise_arc boolean. Used
 // for vector transformation direction.
 void mc_arc(float *target, plan_line_data_t *pl_data, float *position, float *offset, float radius,
-  uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t is_clockwise_arc);
+  uint8_t axis_0, uint8_t axis_1, uint8_t axis_linear, uint8_t axis_rotary, uint8_t is_clockwise_arc);
 
 // Dwell for a specific number of seconds
 void mc_dwell(float seconds);

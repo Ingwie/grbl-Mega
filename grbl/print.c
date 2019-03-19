@@ -46,13 +46,13 @@ void printPgmString(const char *s)
 // 	if (n == 0) {
 // 		serial_write('0');
 // 		return;
-// 	} 
-// 
+// 	}
+//
 // 	while (n > 0) {
 // 		buf[i++] = n % base;
 // 		n /= base;
 // 	}
-// 
+//
 // 	for (; i > 0; i--)
 // 		serial_write(buf[i - 1] < 10 ?
 // 			'0' + buf[i - 1] :
@@ -146,7 +146,7 @@ void printFloat(float n, uint8_t decimal_places)
   n += 0.5; // Add rounding factor. Ensures carryover through entire value.
 
   // Generate digits backwards and store in string.
-  unsigned char buf[13];
+  unsigned char buf[14];
   uint8_t i = 0;
   uint32_t a = (long)n;
   while(a > 0) {
@@ -172,19 +172,27 @@ void printFloat(float n, uint8_t decimal_places)
 // in the config.h.
 //  - CoordValue: Handles all position or coordinate values in inches or mm reporting.
 //  - RateValue: Handles feed rate and current velocity in inches or mm reporting.
-void printFloat_CoordValue(float n) {
-  if (bit_istrue(settings.flags,BITFLAG_REPORT_INCHES)) {
+void printFloat_CoordValue(float n, uint8_t rot) {
+  if (rot == LINEAR) {
+      if (bit_istrue(settings.flags,BITFLAG_REPORT_INCHES)) {
     printFloat(n*INCH_PER_MM,N_DECIMAL_COORDVALUE_INCH);
   } else {
-    printFloat(n,N_DECIMAL_COORDVALUE_MM);
+    printFloat(n,N_DECIMAL_COORDVALUE_MM); }
+  } else // ROTARY
+  {
+    printFloat(n, N_DECIMAL_COORDVALUE_DEGREE);
   }
 }
 
-void printFloat_RateValue(float n) {
-  if (bit_istrue(settings.flags,BITFLAG_REPORT_INCHES)) {
-    printFloat(n*INCH_PER_MM,N_DECIMAL_RATEVALUE_INCH);
+void printFloat_RateValue(float n, uint8_t rot) {
+  if (rot == LINEAR) {
+      if (bit_istrue(settings.flags,BITFLAG_REPORT_INCHES)) {
+        printFloat(n*INCH_PER_MM,N_DECIMAL_RATEVALUE_INCH);
   } else {
-    printFloat(n,N_DECIMAL_RATEVALUE_MM);
+    printFloat(n,N_DECIMAL_RATEVALUE_MM); }
+  } else // ROTARY
+  {
+    printFloat(n, N_DECIMAL_RATEVALUE_DEGREE);
   }
 }
 
