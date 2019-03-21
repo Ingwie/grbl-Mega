@@ -1,4 +1,17 @@
 ![GitHub Logo](https://github.com/gnea/gnea-Media/blob/master/Grbl%20Logo/Grbl%20Logo%20250px.png?raw=true)
+
+# This is a modified FORK to match my CNC machine. #
+## Adds : ##
+- 4th axis "A" (Thanks to https://github.com/LETARTARE/grblQ-Mega-4axes), with just littles mods.
+- Motors plugs detection to enable only wirred ones.
+- A pot. to manage feed rates (1 to 255%).
+- A bi-color led (indicate status : IDLE, RUN,...)
+- Compilation with Code::blocks and AVR-GCC with O2 optimisation (speed).
+
+**Many thanks to the GRBL authors.**
+
+----------
+***Original readme :***
 ***
 _Click the `Release` tab to download pre-compiled `.hex` files or just [click here](https://github.com/gnea/grbl-Mega/releases)_
 ***

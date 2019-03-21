@@ -1,9 +1,6 @@
 #ifndef MA_MACHINE_H_INCLUDED
 #define MA_MACHINE_H_INCLUDED
 
-// https://github.com/LETARTARE/grblQ-Mega-4axes/commit/f11e7717bccc054f77686bc9edaf0d4c11e8397a?w=1
-//AXIS_Q_EXIST
-
 #define MICROSTEPS_XY 32 // Micro stepping XY
 #define MICROSTEPS_Z 16  // Micro stepping Z
 #define MICROSTEPS_A 4   // Micro stepping A
