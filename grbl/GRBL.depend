@@ -1,0 +1,133 @@
+# depslib dependency file v1.0
+1534190594 source:a:\grbl\coolant_control.c
+	"grbl.h"
+
+1534190594 a:\grbl\grbl.h
+	<avr/io.h>
+	<avr/pgmspace.h>
+	<avr/interrupt.h>
+	<avr/wdt.h>
+	<util/delay.h>
+	<math.h>
+	<inttypes.h>
+	<string.h>
+	<stdlib.h>
+	<stdint.h>
+	<stdbool.h>
+	"config.h"
+	"nuts_bolts.h"
+	"settings.h"
+	"system.h"
+	"defaults.h"
+	"cpu_map.h"
+	"planner.h"
+	"coolant_control.h"
+	"eeprom.h"
+	"gcode.h"
+	"limits.h"
+	"motion_control.h"
+	"planner.h"
+	"print.h"
+	"probe.h"
+	"protocol.h"
+	"report.h"
+	"serial.h"
+	"spindle_control.h"
+	"stepper.h"
+	"jog.h"
+	"sleep.h"
+
+1550773792 a:\grbl\config.h
+	"grbl.h"
+
+1550686932 a:\grbl\nuts_bolts.h
+
+1550697446 a:\grbl\settings.h
+	"grbl.h"
+
+1534190594 a:\grbl\system.h
+	"grbl.h"
+
+1550677688 a:\grbl\defaults.h
+	"ma_machine.h"
+
+1550779764 a:\grbl\ma_machine.h
+
+1550685062 a:\grbl\cpu_map.h
+	"nuts_bolts.h"
+
+1534190594 a:\grbl\planner.h
+
+1534190594 a:\grbl\coolant_control.h
+
+1534190594 a:\grbl\eeprom.h
+
+1550690440 a:\grbl\gcode.h
+
+1534190594 a:\grbl\limits.h
+
+1550691836 a:\grbl\motion_control.h
+
+1550693036 a:\grbl\print.h
+
+1534190594 a:\grbl\probe.h
+
+1534190594 a:\grbl\protocol.h
+
+1534190594 a:\grbl\report.h
+
+1534190594 a:\grbl\serial.h
+
+1534190594 a:\grbl\spindle_control.h
+
+1534190594 a:\grbl\stepper.h
+
+1534190594 a:\grbl\jog.h
+	"gcode.h"
+
+1534190594 a:\grbl\sleep.h
+	"grbl.h"
+
+1550692028 source:a:\grbl\eeprom.c
+	<avr/io.h>
+	<avr/interrupt.h>
+
+1550691118 source:a:\grbl\gcode.c
+	"grbl.h"
+
+1550686830 source:a:\grbl\jog.c
+	"grbl.h"
+
+1550690440 source:a:\grbl\limits.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\main.c
+	"grbl.h"
+
+1550691054 source:a:\grbl\motion_control.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\nuts_bolts.c
+	"grbl.h"
+
+1550691866 source:a:\grbl\planner.c
+	"grbl.h"
+
+1550692672 source:a:\grbl\print.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\probe.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\protocol.c
+	"grbl.h"
+
+1550694250 source:a:\grbl\report.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\serial.c
+	"grbl.h"
+
+1534190594 source:a:\grbl\sleep.c
+	"grbl.h"
+

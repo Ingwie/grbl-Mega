@@ -716,7 +716,7 @@ void stepper_init()
   #else
     STEP_DDR |= STEP_MASK;
     DIRECTION_DDR |= DIRECTION_MASK;
-  // Configure enable/disable pins
+  // Configure enable/disable & presence pins
     STEPPERS_DISABLE_DDR |= STEPPERS_DISABLE_MASK;
     STEPPERS_DISABLE_ALL_AXIS_DDR |= STEPPERS_DISABLE_ALL_AXIS_MASK; // steppers enable ouput
     STEPPERS_DISABLE_ALL_AXIS_DDR &= ~STEPPERS_IS_PRESENT_ALL_AXIS_MASK; // axis presence input

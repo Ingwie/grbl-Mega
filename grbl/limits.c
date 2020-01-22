@@ -107,7 +107,7 @@ void limits_disable()
     PCICR &= ~(1 << LIMIT_INT);  // Disable Pin Change Interrupt
   #endif // DEFAULTS_RAMPS_BOARD
 }
-#ifdef DEFAULTS_RAMPS_BOARD  
+#ifdef DEFAULTS_RAMPS_BOARD
   static volatile uint8_t * const max_limit_pins[N_AXIS] = {&MAX_LIMIT_PIN(0), &MAX_LIMIT_PIN(1), &MAX_LIMIT_PIN(2)};
   static volatile uint8_t * const min_limit_pins[N_AXIS] = {&MIN_LIMIT_PIN(0), &MIN_LIMIT_PIN(1), &MIN_LIMIT_PIN(2)};
   static const uint8_t max_limit_bits[N_AXIS] = {MAX_LIMIT_BIT(0), MAX_LIMIT_BIT(1), MAX_LIMIT_BIT(2)};
@@ -143,7 +143,7 @@ uint8_t limits_get_state()
       #endif
       if (pin)
         limit_state |= (1 << idx);
-    } 
+    }
     return(limit_state);
   #else
     uint8_t pin = (LIMIT_PIN & LIMIT_MASK);
@@ -153,7 +153,7 @@ uint8_t limits_get_state()
     if (bit_isfalse(settings.flags,BITFLAG_INVERT_LIMIT_PINS)) { pin ^= LIMIT_MASK; }
     if (pin) {
       uint8_t idx;
-      for (idx=0; idx<N_AXIS_XYZ; idx++) {
+      for (idx=0; idx<N_AXIS; idx++) {
         if (pin & get_limit_pin_mask(idx)) { limit_state |= (1 << idx); }
       }
     }
@@ -166,7 +166,7 @@ uint8_t limits_get_state()
     #error "HW limits are not implemented"
   #endif
 #else
-// This is the Limit Pin Change Interrupt, which handles the hard limit feature. A bouncing 
+// This is the Limit Pin Change Interrupt, which handles the hard limit feature. A bouncing
 // limit switch can cause a lot of problems, like false readings and multiple interrupt calls.
 // If a switch is triggered at all, something bad has happened and treat it as such, regardless
 // if a limit switch is being disengaged. It's impossible to reliably tell the state of a
@@ -224,13 +224,13 @@ uint8_t limits_get_state()
   {
     uint8_t res = 0;
     uint8_t idx;
- 
+
     for (idx = 0; idx < N_AXIS; idx++)
       if (axislock[idx]) {
         res = 1;
         break;
       }
- 
+
     return res;
   }
 #endif // DEFAULTS_RAMPS_BOARD
@@ -320,7 +320,7 @@ void limits_go_home(uint8_t cycle_mask)
 
       }
       homing_rate *= sqrt(n_active_axis); // [sqrt(N_AXIS)] Adjust so individual axes all move at homing rate.
-      
+
 
       // Perform homing cycle. Planner buffer should be empty, as required to initiate the homing cycle.
       pl_data->feed_rate = homing_rate; // Set current homing rate.

@@ -31,7 +31,7 @@
 #define HOMING_CYCLE_X    bit(X_AXIS)
 #define HOMING_CYCLE_Y    bit(Y_AXIS)
 #define HOMING_CYCLE_Z    bit(Z_AXIS)
-#define HOMING_CYCLE_A    bit(A_AXIS) // not used
+#define HOMING_CYCLE_A    bit(A_AXIS)
 
 // Execute linear motion in absolute millimeter coordinates. Feed rate given in millimeters/second
 // unless invert_feed_rate is true. Then the feed_rate means that the motion should be completed in

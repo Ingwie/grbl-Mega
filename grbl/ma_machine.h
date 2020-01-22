@@ -22,7 +22,7 @@
 #define DEFAULT_Y_ACCELERATION (250.0*60*60) // 10*60*60 mm/min^2 = 10 mm/sec^2
 #define DEFAULT_Z_ACCELERATION (100.0*60*60) // 10*60*60 mm/min^2 = 10 mm/sec^2
 #define DEFAULT_A_ACCELERATION (300.0*60*60) // 10*60*60 °/min^2 = 10 m°/sec^2
-#define DEFAULT_X_MAX_TRAVEL 688.0 // mm NOTE: Must be a positive value.
+#define DEFAULT_X_MAX_TRAVEL 868.0 // mm NOTE: Must be a positive value.
 #define DEFAULT_Y_MAX_TRAVEL 510.0 // mm NOTE: Must be a positive value.
 #define DEFAULT_Z_MAX_TRAVEL 140.0 // mm NOTE: Must be a positive value.
 #define DEFAULT_A_MAX_TRAVEL 0.0 // ° NOTE: Must be a positive value.
@@ -49,7 +49,7 @@
 #define DEFAULT_HOMING_DEBOUNCE_DELAY 50 // msec (0-65k)
 #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 
-// Micro stepping settings
+// Micro stepping settings (DRV8825)
 /* MODE2|MODE1|MODE0|STEP MODE
      0  |  0  |  0  |Full step (2-phase excitation) with 71% current
      0  |  0  |  1  |1/2 step (1-2 phase excitation)
@@ -137,10 +137,10 @@
 #define DIRECTION_MASK ((1<<X_DIRECTION_BIT)|(1<<Y_DIRECTION_BIT)|(1<<Z_DIRECTION_BIT)|(1<<A_DIRECTION_BIT)) // All direction bits
 
 // Define stepper driver enable/disable output pin.
-#define STEPPERS_DISABLE_DDR   DDRB
-#define STEPPERS_DISABLE_PORT  PORTB
-#define STEPPERS_DISABLE_BIT   7 // MEGA2560 Digital Pin 13
-#define STEPPERS_DISABLE_MASK (1<<STEPPERS_DISABLE_BIT)
+#define STEPPERS_DISABLE_DDR   DDRG
+#define STEPPERS_DISABLE_PORT  PORTG
+#define STEPPERS_DISABLE_BIT   5 // MEGA2560 Digital Pin 4
+#define STEPPERS_DISABLE_MASK  (1<<STEPPERS_DISABLE_BIT)
 
 #define STEPPERS_DISABLE_ALL_AXIS_DDR   DDRL
 #define STEPPERS_DISABLE_ALL_AXIS_PORT  PORTL
@@ -154,7 +154,7 @@
 #define STEPPERS_DISABLE_AXIS_A_MASK (1<<STEPPERS_DISABLE_AXIS_A_BIT)
 #define STEPPERS_DISABLE_ALL_AXIS_MASK (STEPPERS_DISABLE_AXIS_X_MASK | STEPPERS_DISABLE_AXIS_Y_MASK | STEPPERS_DISABLE_AXIS_Z_MASK | STEPPERS_DISABLE_AXIS_A_MASK)
 
-// Define stepper driver enable/disable input pin.
+// Define stepper presence enable/disable input pin.
 #define STEPPERS_DISABLE_ALL_AXIS_PIN   PINL
 #define STEPPERS_IS_PRESENT_AXIS_X_BIT   7 // MEGA2560 Digital Pin 42
 #define STEPPERS_IS_PRESENT_AXIS_X_MASK (1<<STEPPERS_IS_PRESENT_AXIS_X_BIT)
@@ -174,11 +174,11 @@
 #define X_LIMIT_BIT     4 // MEGA2560 Digital Pin 10
 #define Y_LIMIT_BIT     5 // MEGA2560 Digital Pin 11
 #define Z_LIMIT_BIT     6 // MEGA2560 Digital Pin 12
-//#define A_LIMIT_BIT     No limit switch
+#define A_LIMIT_BIT     7 // MEGA2560 Digital Pin 13
 #define LIMIT_INT       PCIE0  // Pin change interrupt enable pin
 #define LIMIT_INT_vect  PCINT0_vect
 #define LIMIT_PCMSK     PCMSK0 // Pin change interrupt register
-#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All limit bits
+#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)|(1<<A_LIMIT_BIT)) // All limit bits
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_DDR      DDRH
@@ -257,7 +257,7 @@
 #define MSTEP_A_OFFSET     0
 
 // FEED_RATE_POT
-#define USE_FEED_RATE_POT       YES
+#define USE_FEED_RATE_POT
 
 #define FEED_RATE_POT_DDR       DDRF
 #define FEED_RATE_POT_PORT      PORTF
@@ -265,7 +265,7 @@
 #define FEED_RATE_POT_PIN       (1<<FEED_RATE_POT_INPUT)
 
 // Status leds
-#define USE_STATUS_LED    YES
+#define USE_STATUS_LED
 
 #define STATUS_LED_DDR    DDRJ
 #define STATUS_LED_PORT   PORTJ
