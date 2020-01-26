@@ -37,10 +37,6 @@
 
 // CoreXY motor assignments. DO NOT ALTER.
 // NOTE: If the A and B motor axis bindings are changed, this effects the CoreXY equations.
-#ifdef COREXY
- #define A_MOTOR X_AXIS // Must be X_AXIS
- #define B_MOTOR Y_AXIS // Must be Y_AXIS
-#endif
 
 // Conversions
 #define MM_PER_INCH (25.40)

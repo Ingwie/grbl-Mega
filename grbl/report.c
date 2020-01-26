@@ -369,9 +369,6 @@ void report_build_info(char *line)
   serial_write('N'); // Line number reporting standard.
   serial_write('M'); // M7 mist coolant standard.
   serial_write('+'); // Safety door support standard.
-  #ifdef COREXY
-    serial_write('C');
-  #endif
   #ifdef PARKING_ENABLE
     serial_write('P');
   #endif
