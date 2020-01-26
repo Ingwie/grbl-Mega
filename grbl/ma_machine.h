@@ -38,11 +38,11 @@
 #define DEFAULT_REPORT_INCHES 0 // false
 #define DEFAULT_INVERT_ST_ENABLE 1 // false
 #define DEFAULT_INVERT_LIMIT_PINS 0 // false
-#define DEFAULT_SOFT_LIMIT_ENABLE 0 // false
-#define DEFAULT_HARD_LIMIT_ENABLE 0  // false
+#define DEFAULT_SOFT_LIMIT_ENABLE 1 // true
+#define DEFAULT_HARD_LIMIT_ENABLE 1  // true
 #define DEFAULT_INVERT_PROBE_PIN 0 // false
 #define DEFAULT_LASER_MODE 0 // false
-#define DEFAULT_HOMING_ENABLE 0  // false
+#define DEFAULT_HOMING_ENABLE 1  // true
 #define DEFAULT_HOMING_DIR_MASK 1 // move negative dir
 #define DEFAULT_HOMING_FEED_RATE 25.0 // mm/min
 #define DEFAULT_HOMING_SEEK_RATE 200.0 // mm/min
@@ -179,6 +179,7 @@
 #define LIMIT_INT_vect  PCINT0_vect
 #define LIMIT_PCMSK     PCMSK0 // Pin change interrupt register
 #define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)|(1<<A_LIMIT_BIT)) // All limit bits
+//#define DISABLE_HW_LIMITS
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_DDR      DDRH
