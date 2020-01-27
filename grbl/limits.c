@@ -32,16 +32,16 @@
 
 void limits_init()
 {
-    LIMIT_DDR &= ~(LIMIT_MASK); // Set as input pins
+    LIMIT_DDR &= ~(HW_LIMIT_MASK); // Set as input pins
 
     #ifdef DISABLE_LIMIT_PIN_PULL_UP
-      LIMIT_PORT &= ~(LIMIT_MASK); // Normal low operation. Requires external pull-down.
+      LIMIT_PORT &= ~(HW_LIMIT_MASK); // Normal low operation. Requires external pull-down.
     #else
-      LIMIT_PORT |= (LIMIT_MASK);  // Enable internal pull-up resistors. Normal high operation.
+      LIMIT_PORT |= (HW_LIMIT_MASK);  // Enable internal pull-up resistors. Normal high operation.
     #endif
 
     if (bit_istrue(settings.flags,BITFLAG_HARD_LIMIT_ENABLE)) {
-      LIMIT_PCMSK |= LIMIT_MASK; // Enable specific pins of the Pin Change Interrupt
+      LIMIT_PCMSK |= HW_LIMIT_MASK; // Enable specific pins of the Pin Change Interrupt
       PCICR |= (1 << LIMIT_INT); // Enable Pin Change Interrupt
     } else {
       limits_disable();
@@ -58,7 +58,7 @@ void limits_init()
 // Disables hard limits.
 void limits_disable()
 {
-    LIMIT_PCMSK &= ~LIMIT_MASK;  // Disable specific pins of the Pin Change Interrupt
+    LIMIT_PCMSK &= ~HW_LIMIT_MASK;  // Disable specific pins of the Pin Change Interrupt
     PCICR &= ~(1 << LIMIT_INT);  // Disable Pin Change Interrupt
 }
 
@@ -160,7 +160,7 @@ void limits_go_home(uint8_t cycle_mask)
   float target[N_AXIS];
   float max_travel = 0.0;
   uint8_t idx;
-  for (idx=0; idx<N_AXIS_XYZ; idx++) {
+  for (idx=0; idx<N_AXIS; idx++) {
     // Initialize step pin masks
     step_pin[idx] = get_step_pin_mask(idx);
 
@@ -273,7 +273,7 @@ void limits_go_home(uint8_t cycle_mask)
   // triggering when hard limits are enabled or when more than one axes shares a limit pin.
   int32_t set_axis_position;
   // Set machine positions for homed limit switches. Don't update non-homed axes.
-  for (idx=0; idx<N_AXIS_XYZ; idx++) {
+  for (idx=0; idx<N_AXIS; idx++) {
     // NOTE: settings.max_travel[] is stored as a negative value.
     if (cycle_mask & bit(idx)) {
       #ifdef HOMING_FORCE_SET_ORIGIN

@@ -60,7 +60,8 @@ const __flash settings_t defaults = {\
     .acceleration[A_AXIS] = DEFAULT_A_ACCELERATION,
     .max_travel[X_AXIS] = (-DEFAULT_X_MAX_TRAVEL),
     .max_travel[Y_AXIS] = (-DEFAULT_Y_MAX_TRAVEL),
-    .max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL)};
+    .max_travel[Z_AXIS] = (-DEFAULT_Z_MAX_TRAVEL),
+    .max_travel[A_AXIS] = (-DEFAULT_A_MAX_TRAVEL)};
 
 
 // Method to store startup lines into EEPROM

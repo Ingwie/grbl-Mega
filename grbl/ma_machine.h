@@ -25,7 +25,7 @@
 #define DEFAULT_X_MAX_TRAVEL 868.0 // mm NOTE: Must be a positive value.
 #define DEFAULT_Y_MAX_TRAVEL 510.0 // mm NOTE: Must be a positive value.
 #define DEFAULT_Z_MAX_TRAVEL 140.0 // mm NOTE: Must be a positive value.
-#define DEFAULT_A_MAX_TRAVEL 0.0 // ° NOTE: Must be a positive value.
+#define DEFAULT_A_MAX_TRAVEL 360.0 // ° NOTE: Must be a positive value.
 #define DEFAULT_SPINDLE_RPM_MAX 10000.0 // rpm
 #define DEFAULT_SPINDLE_RPM_MIN 0.0 // rpm
 #define DEFAULT_STEP_PULSE_MICROSECONDS 10
@@ -178,8 +178,8 @@
 #define LIMIT_INT       PCIE0  // Pin change interrupt enable pin
 #define LIMIT_INT_vect  PCINT0_vect
 #define LIMIT_PCMSK     PCMSK0 // Pin change interrupt register
-#define LIMIT_MASK ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)|(1<<A_LIMIT_BIT)) // All limit bits
-//#define DISABLE_HW_LIMITS
+#define LIMIT_MASK      ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)|(1<<A_LIMIT_BIT)) // All limit bits
+#define HW_LIMIT_MASK   ((1<<X_LIMIT_BIT)|(1<<Y_LIMIT_BIT)|(1<<Z_LIMIT_BIT)) // All HW limit bits (Not A -> rot. axis)
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_DDR      DDRH

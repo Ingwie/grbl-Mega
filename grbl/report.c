@@ -40,7 +40,7 @@ static void report_util_gcode_modes_M() { printPgmString(PSTR(" M")); }
 static void report_util_axis_values(float *axis_value) {
   uint8_t idx;
   for (idx=0; idx<N_AXIS; idx++) {
-      if (idx < N_AXIS_XYZ) printFloat_CoordValue(axis_value[idx], LINEAR);
+      if (idx < N_AXIS_LINEAR) printFloat_CoordValue(axis_value[idx], LINEAR);
       else printFloat_CoordValue(axis_value[idx], ROTARY);
     if (idx < (N_AXIS-1)) { serial_write(','); }
   }

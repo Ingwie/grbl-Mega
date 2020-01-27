@@ -468,7 +468,7 @@ uint8_t gc_execute_line(char *line)
   // Pre-convert XYZ coordinate values to millimeters, if applicable.
   uint8_t idx;
   if (gc_block.modal.units == UNITS_MODE_INCHES) {
-    for (idx=0; idx<N_AXIS_XYZ; idx++) { // Axes indices are consistent, so loop may be used.
+    for (idx=0; idx<N_AXIS_LINEAR; idx++) { // Axes indices are consistent, so loop may be used.
       if (bit_istrue(axis_words,bit(idx)) ) {
         gc_block.values.xyza[idx] *= MM_PER_INCH;
       }
@@ -780,7 +780,7 @@ uint8_t gc_execute_line(char *line)
 
             // Convert IJK values to proper units.
             if (gc_block.modal.units == UNITS_MODE_INCHES) {
-              for (idx=0; idx<N_AXIS_XYZ; idx++) { // Axes indices are consistent, so loop may be used to save flash space.
+              for (idx=0; idx<N_AXIS_LINEAR; idx++) { // Axes indices are consistent, so loop may be used to save flash space.
                 if (ijk_words & bit(idx)) { gc_block.values.ijk[idx] *= MM_PER_INCH; }
               }
             }
