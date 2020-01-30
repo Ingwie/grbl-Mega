@@ -35,9 +35,6 @@
 #define A_AXIS 3
 #define N_AXIS_LINEAR (N_AXIS - 1)
 
-// CoreXY motor assignments. DO NOT ALTER.
-// NOTE: If the A and B motor axis bindings are changed, this effects the CoreXY equations.
-
 // Conversions
 #define MM_PER_INCH (25.40)
 #define INCH_PER_MM (0.0393701)

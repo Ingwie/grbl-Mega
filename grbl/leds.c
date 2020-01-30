@@ -94,7 +94,7 @@ void UpdateStatusLeds()
             }
           else
             {
-              ORANGE_LED_OFF;
+              LED_OFF;
             }
           break; // orange blink
         case STATE_JOG :
@@ -111,7 +111,7 @@ void UpdateStatusLeds()
           break; // green blink
 
         default :
-          ORANGE_LED_OFF; // All off
+          LED_OFF; // All off
         }
     }
 }

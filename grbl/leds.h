@@ -26,7 +26,7 @@
   #define RED_LED_ON        STATUS_LED_PORT |= RED_LED
   #define RED_LED_OFF       STATUS_LED_PORT &= ~RED_LED
   #define ORANGE_LED_ON     STATUS_LED_PORT |= (GREEN_LED | RED_LED)// bicolor led used ;-)
-  #define ORANGE_LED_OFF    STATUS_LED_PORT &= ~(GREEN_LED | RED_LED)
+  #define LED_OFF           STATUS_LED_PORT &= ~(GREEN_LED | RED_LED)
 
   void InitStatusLeds();
 
