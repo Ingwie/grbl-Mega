@@ -1127,7 +1127,7 @@ uint8_t gc_execute_line(char *line)
 
   - Canned cycles
   - Tool radius compensation
-  - A,B,C-axes
+  - B,C-axes ;-)
   - Evaluation of expressions
   - Variables
   - Override control (TBD)
