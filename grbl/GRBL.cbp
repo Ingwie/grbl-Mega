@@ -13,11 +13,8 @@
 				<Option type="5" />
 				<Option compiler="avr-gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 				</Compiler>
-				<Linker>
-					<Add option="-O2" />
-				</Linker>
 			</Target>
 			<Environment>
 				<Variable name="MCU" value="atmega2560" />
