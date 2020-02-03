@@ -6,7 +6,7 @@
 - Motors plugs detection to enable only wirred ones.
 - A pot. to manage feed rates (1 to 255%).
 - A bi-color led (indicate status : IDLE, RUN,...)
-- Compilation with Code::blocks and AVR-GCC with O2 optimisation (speed).
+- Compilation with Code::blocks and AVR-GCC with O3 optimisation (speed).
 
 **Many thanks to the GRBL authors.**
 
