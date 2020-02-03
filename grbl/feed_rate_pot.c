@@ -40,15 +40,15 @@ void UpdateFeedratePotValue()
   static uint8_t feedratePotValueMem;
   if (bit_is_clear(ADCSRA,ADSC)) // If the AD conversion is complete
     {
-      feedratePotValue = ADC>>2; // Update value /4 -> (0 - 255)
-      if (!feedratePotValue) ++feedratePotValue; // Min value is 1
-
-      ADCSRA |= (1 << ADSC); // Start another AD conversion
+      feedratePotValue = ADC>>2; // Update value/4 -> (0 - 255)
+      ADCSRA |= (1 << ADSC);     // Start another AD conversion
 
       if (feedratePotValueMem != feedratePotValue)
         {
           feedratePotValueMem = feedratePotValue;
           sys.f_override = feedratePotValueMem;
+          // Rapid must don't exced DEFAULT_RAPID_OVERRIDE
+          if (feedratePotValueMem > DEFAULT_RAPID_OVERRIDE) {feedratePotValueMem = DEFAULT_RAPID_OVERRIDE;}
           sys.r_override = feedratePotValueMem;
           sys.report_ovr_counter = 0; // Set to report change immediately
           plan_update_velocity_profile_parameters();
