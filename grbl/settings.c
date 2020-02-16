@@ -40,7 +40,7 @@ const __flash settings_t defaults = {
     .homing_pulloff = DEFAULT_HOMING_PULLOFF,
     .flags = (DEFAULT_REPORT_INCHES << BIT_REPORT_INCHES) |
              (DEFAULT_LASER_MODE << BIT_LASER_MODE) |
-             (DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) |
+             ~(DEFAULT_INVERT_ST_ENABLE << BIT_INVERT_ST_ENABLE) | // DRV8825 direct drive
              (DEFAULT_HARD_LIMIT_ENABLE << BIT_HARD_LIMIT_ENABLE) |
              (DEFAULT_HOMING_ENABLE << BIT_HOMING_ENABLE) |
              (DEFAULT_SOFT_LIMIT_ENABLE << BIT_SOFT_LIMIT_ENABLE) |
