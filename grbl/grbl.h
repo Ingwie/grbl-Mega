@@ -23,7 +23,7 @@
 
 // Grbl versioning system
 #define GRBL_VERSION "1.1g"
-#define GRBL_VERSION_BUILD "20180813.Mega"
+#define GRBL_VERSION_BUILD "20181112.Mega" // I hope up to (this) date
 #define F_CPU 16000000UL
 
 // Define standard libraries used by Grbl.
