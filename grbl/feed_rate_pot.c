@@ -22,8 +22,6 @@
 
 #define ADC_VREF_TYPE (1 << REFS0) // AVCC (5V) with external capacitor at AREF pin
 
-uint8_t feedratePotValue;
-
 void InitFeedratePot()
 {
   FEED_RATE_POT_DDR &= ~(FEED_RATE_POT_PIN); // Configure as input pin
@@ -38,18 +36,19 @@ void InitFeedratePot()
 void UpdateFeedratePotValue()
 {
   static uint8_t feedratePotValueMem;
+
   if (bit_is_clear(ADCSRA,ADSC)) // If the AD conversion is complete
     {
-      feedratePotValue = ADC>>2; // Update value/4 -> (0 - 255)
+      uint8_t feedratePotValue = ADC>>2; // Update value/4 -> (0 - 255)
       ADCSRA |= (1 << ADSC);     // Start another AD conversion
 
       if (feedratePotValueMem != feedratePotValue)
         {
           feedratePotValueMem = feedratePotValue;
-          sys.f_override = feedratePotValueMem;
+          sys.f_override = feedratePotValue;
           // Rapid must don't exced DEFAULT_RAPID_OVERRIDE
-          if (feedratePotValueMem > DEFAULT_RAPID_OVERRIDE) {feedratePotValueMem = DEFAULT_RAPID_OVERRIDE;}
-          sys.r_override = feedratePotValueMem;
+          if (feedratePotValue > DEFAULT_RAPID_OVERRIDE) {feedratePotValue = DEFAULT_RAPID_OVERRIDE;}
+          sys.r_override = feedratePotValue;
           sys.report_ovr_counter = 0; // Set to report change immediately
           plan_update_velocity_profile_parameters();
           plan_cycle_reinitialize();
