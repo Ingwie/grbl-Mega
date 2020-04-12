@@ -65,6 +65,9 @@
 #include "feed_rate_pot.h"
 #include "leds.h"
 
+uint8_t Power_Status;
+
+
 // ---------------------------------------------------------------------------------------
 // COMPILE-TIME ERROR CHECKING OF DEFINE VALUES:
 

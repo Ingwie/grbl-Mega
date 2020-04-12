@@ -229,12 +229,15 @@ void mc_homing_cycle(uint8_t cycle_mask)
   #endif
   {
     // Search to engage all axes limit switches at faster homing seek rate.
-    limits_go_home(HOMING_CYCLE_0);  // Homing cycle 0
+    if (AXIS_Z_IS_PRESENT) limits_go_home(HOMING_CYCLE_0);  // Homing cycle 0
     #ifdef HOMING_CYCLE_1
-      limits_go_home(HOMING_CYCLE_1);  // Homing cycle 1
+    if (AXIS_X_IS_PRESENT && AXIS_Y_IS_PRESENT) limits_go_home(HOMING_CYCLE_1);  // Homing cycle 1
+    else if (!AXIS_Y_IS_PRESENT) limits_go_home(HOMING_CYCLE_X_ONLY);
+    else limits_go_home(HOMING_CYCLE_Y_ONLY);
+
     #endif
     #ifdef HOMING_CYCLE_2
-      limits_go_home(HOMING_CYCLE_2);  // Homing cycle 2
+    if (AXIS_A_IS_PRESENT) limits_go_home(HOMING_CYCLE_2);  // Homing cycle 2
     #endif
   }
 

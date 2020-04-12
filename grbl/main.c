@@ -23,6 +23,7 @@
 
 
 // Declare system global variable structure
+uint8_t Power_Status = 0;
 system_t sys;
 int32_t sys_position[N_AXIS];      // Real-time machine (aka home) position vector in steps.
 int32_t sys_probe_position[N_AXIS]; // Last probe position in machine coordinates and steps.
@@ -48,7 +49,7 @@ int main(void)
   #endif // USE_FEED_RATE_POT
   #ifdef USE_STATUS_LED
   InitStatusLeds();
-  #endif // USE_STATUS_LED
+  #endif
 
   memset(sys_position,0,sizeof(sys_position)); // Clear machine position.
   sei(); // Enable interrupts
@@ -57,6 +58,7 @@ int main(void)
   #ifdef FORCE_INITIALIZATION_ALARM
     // Force Grbl into an ALARM state upon a power-cycle or hard reset.
     sys.state = STATE_ALARM;
+    st_go_idle(); // reset power supply in case of hard reset
   #else
     sys.state = STATE_IDLE;
   #endif
@@ -71,7 +73,6 @@ int main(void)
   #ifdef HOMING_INIT_LOCK
     if (bit_istrue(settings.flags,BITFLAG_HOMING_ENABLE)) { sys.state = STATE_ALARM; }
   #endif
-
   // Grbl initialization loop upon power-up or a system abort. For the latter, all processes
   // will return to this loop to be cleanly re-initialized.
   for(;;) {

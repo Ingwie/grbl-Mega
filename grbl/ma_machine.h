@@ -3,7 +3,7 @@
 
 #define MICROSTEPS_XY 32 // Micro stepping XY
 #define MICROSTEPS_Z 16  // Micro stepping Z
-#define MICROSTEPS_A 4   // Micro stepping A
+#define MICROSTEPS_A 16  // Micro stepping A
 
 #define MOTOR_STEP 200 // number of step per turn
 #define Z_SCREW_PITCH_MM 4 // Z Screw pitch in mm
@@ -11,10 +11,10 @@
 #define PULLEY_REDUCTION_XY_DENO 34 // XY 2nd pulley
 #define MM_BELT_PER_TURN_XY (5.08 * 10) // 10 tooth * 5.08 mm XL037
 //
-#define DEFAULT_X_STEPS_PER_MM ((MOTOR_STEP * MICROSTEPS_XY * MM_BELT_PER_TURN_XY * PULLEY_REDUCTION_XY_NUME) / PULLEY_REDUCTION_XY_DENO)
-#define DEFAULT_Y_STEPS_PER_MM ((MOTOR_STEP * MICROSTEPS_XY * MM_BELT_PER_TURN_XY * PULLEY_REDUCTION_XY_NUME) / PULLEY_REDUCTION_XY_DENO)
-#define DEFAULT_Z_STEPS_PER_MM ((MOTOR_STEP * MICROSTEPS_Z) / Z_SCREW_PITCH_MM)
-#define DEFAULT_A_STEPS_PER_DEG ((MOTOR_STEP * MICROSTEPS_A * 18.2) / 360) // (52/12)*(84/20) reduction
+#define DEFAULT_X_STEPS_PER_MM  428.3464567 //((MOTOR_STEP * MICROSTEPS_XY * PULLEY_REDUCTION_XY_DENO) / (PULLEY_REDUCTION_XY_NUME * MM_BELT_PER_TURN_XY))
+#define DEFAULT_Y_STEPS_PER_MM  428.3464567 //(((MOTOR_STEP * MICROSTEPS_XY * PULLEY_REDUCTION_XY_DENO) / (PULLEY_REDUCTION_XY_NUME * MM_BELT_PER_TURN_XY))
+#define DEFAULT_Z_STEPS_PER_MM  800 //((MOTOR_STEP * MICROSTEPS_Z) / Z_SCREW_PITCH_MM)
+#define DEFAULT_A_STEPS_PER_DEG 40.44444444 //((MOTOR_STEP * MICROSTEPS_A * 18.2) / 360) // (12/52)*(20/84) reduction
 #define DEFAULT_X_MAX_RATE ((29900/DEFAULT_X_STEPS_PER_MM)*60) // mm/min
 #define DEFAULT_Y_MAX_RATE ((29900/DEFAULT_Y_STEPS_PER_MM)*60) // mm/min
 #define DEFAULT_Z_MAX_RATE ((29900/DEFAULT_Z_STEPS_PER_MM)*60) // mm/min
@@ -37,7 +37,7 @@
 #define DEFAULT_JUNCTION_DEVIATION 0.01 // mm
 #define DEFAULT_ARC_TOLERANCE 0.002 // mm
 #define DEFAULT_REPORT_INCHES 0 // false
-#define DEFAULT_INVERT_ST_ENABLE 1 // false
+#define DEFAULT_INVERT_ST_ENABLE 0 // false
 #define DEFAULT_INVERT_LIMIT_PINS 0 // false
 #define DEFAULT_SOFT_LIMIT_ENABLE 1 // true
 #define DEFAULT_HARD_LIMIT_ENABLE 1  // true
@@ -160,22 +160,37 @@
 #if defined(CHECK_STEPPERS_PRESENCE)
 #define STEPPERS_IS_PRESENT_ALL_AXIS_DDR  DDRL
 #define STEPPERS_IS_PRESENT_ALL_AXIS_PORT PORTL
-#define STEPPERS_IS_PRESENT_ALL_AXIS_PIN      PINL
+#define STEPPERS_IS_PRESENT_ALL_AXIS_PIN  PINL
 #define STEPPERS_IS_PRESENT_AXIS_X_BIT    7 // MEGA2560 Digital Pin 42
 #define STEPPERS_IS_PRESENT_AXIS_X_MASK   (1<<STEPPERS_IS_PRESENT_AXIS_X_BIT)
+#define AXIS_X_IS_PRESENT                 (!(STEPPERS_IS_PRESENT_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_X_MASK))
 #define STEPPERS_IS_PRESENT_AXIS_Y_BIT    5 // MEGA2560 Digital Pin 44
 #define STEPPERS_IS_PRESENT_AXIS_Y_MASK   (1<<STEPPERS_IS_PRESENT_AXIS_Y_BIT)
+#define AXIS_Y_IS_PRESENT                 (!(STEPPERS_IS_PRESENT_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Y_MASK))
 #define STEPPERS_IS_PRESENT_AXIS_Z_BIT    3 // MEGA2560 Digital Pin 46
 #define STEPPERS_IS_PRESENT_AXIS_Z_MASK   (1<<STEPPERS_IS_PRESENT_AXIS_Z_BIT)
+#define AXIS_Z_IS_PRESENT                 (!(STEPPERS_IS_PRESENT_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_Z_MASK))
 #define STEPPERS_IS_PRESENT_AXIS_A_BIT    1 // MEGA2560 Digital Pin 48
 #define STEPPERS_IS_PRESENT_AXIS_A_MASK   (1<<STEPPERS_IS_PRESENT_AXIS_A_BIT)
+#define AXIS_A_IS_PRESENT                 (!(STEPPERS_IS_PRESENT_ALL_AXIS_PIN & STEPPERS_IS_PRESENT_AXIS_A_MASK))
 #define STEPPERS_IS_PRESENT_ALL_AXIS_MASK (STEPPERS_IS_PRESENT_AXIS_X_MASK | STEPPERS_IS_PRESENT_AXIS_Y_MASK | STEPPERS_IS_PRESENT_AXIS_Z_MASK | STEPPERS_IS_PRESENT_AXIS_A_MASK)
+#define JUMP_IF_AXIS_NOT_PRESENT(x)             \
+if  (((x == X_AXIS) && (!AXIS_X_IS_PRESENT)) |  \
+     ((x == Y_AXIS) && (!AXIS_Y_IS_PRESENT)) |  \
+     ((x == Z_AXIS) && (!AXIS_Z_IS_PRESENT)) |  \
+     ((x == A_AXIS) && (!AXIS_A_IS_PRESENT)))   \
+      continue
+
 #else
-#define STEPPERS_IS_PRESENT_ALL_AXIS_PIN      0
+#define STEPPERS_IS_PRESENT_ALL_AXIS_PIN  0
 #define STEPPERS_IS_PRESENT_AXIS_X_MASK   0
 #define STEPPERS_IS_PRESENT_AXIS_Y_MASK   0
 #define STEPPERS_IS_PRESENT_AXIS_Z_MASK   0
 #define STEPPERS_IS_PRESENT_AXIS_A_MASK   0
+#define AXIS_X_IS_PRESENT                 1
+#define AXIS_Y_IS_PRESENT                 1                 1
+#define AXIS_Z_IS_PRESENT                 1
+#define AXIS_A_IS_PRESENT                 1
 #endif
 
 // Define homing/hard limit switch input pins and limit interrupt vectors.
@@ -211,17 +226,17 @@
 
 // Define user-control CONTROLs (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
-#define CONTROL_DDR       DDRK
-#define CONTROL_PIN       PINK
-#define CONTROL_PORT      PORTK
+#define CONTROL_DDR               DDRK
+#define CONTROL_PIN               PINK
+#define CONTROL_PORT              PORTK
 #define CONTROL_RESET_BIT         0  // MEGA2560 Analog Pin 8
 #define CONTROL_FEED_HOLD_BIT     1  // MEGA2560 Analog Pin 9
 #define CONTROL_CYCLE_START_BIT   2  // MEGA2560 Analog Pin 10
 #define CONTROL_SAFETY_DOOR_BIT   3  // MEGA2560 Analog Pin 11
-#define CONTROL_INT       PCIE2  // Pin change interrupt enable pin
-#define CONTROL_INT_vect  PCINT2_vect
-#define CONTROL_PCMSK     PCMSK2 // Pin change interrupt register
-#define CONTROL_MASK      ((1<<CONTROL_RESET_BIT)|(1<<CONTROL_FEED_HOLD_BIT)|(1<<CONTROL_CYCLE_START_BIT)|(1<<CONTROL_SAFETY_DOOR_BIT))
+#define CONTROL_INT               PCIE2  // Pin change interrupt enable pin
+#define CONTROL_INT_vect          PCINT2_vect
+#define CONTROL_PCMSK             PCMSK2 // Pin change interrupt register
+#define CONTROL_MASK              ((1<<CONTROL_RESET_BIT)|(1<<CONTROL_FEED_HOLD_BIT)|(1<<CONTROL_CYCLE_START_BIT)|(1<<CONTROL_SAFETY_DOOR_BIT))
 
 // Define probe switch input pin.
 #define PROBE_DDR       DDRK

@@ -76,6 +76,7 @@ uint8_t limits_get_state()
     if (pin) {
       uint8_t idx;
       for (idx=0; idx<N_AXIS; idx++) {
+        JUMP_IF_AXIS_NOT_PRESENT(idx);
         if (pin & get_limit_pin_mask(idx)) { limit_state |= (1 << idx); }
       }
     }
@@ -175,7 +176,9 @@ void limits_go_home(uint8_t cycle_mask)
   float homing_rate = settings.homing_seek_rate;
     uint8_t limit_state, axislock, n_active_axis;
     do {
-
+#ifdef USE_STATUS_LED
+      UpdateStatusLeds();
+#end
       system_convert_array_steps_to_mpos(target,sys_position);
 
       // Initialize and declare variables needed for homing routine.
@@ -211,6 +214,9 @@ void limits_go_home(uint8_t cycle_mask)
       st_prep_buffer(); // Prep and fill segment buffer from newly planned block.
       st_wake_up(); // Initiate motion
       do {
+#ifdef USE_STATUS_LED
+        UpdateStatusLeds();
+#end
         if (approach) {
           // Check limit state. Lock out cycle axes when they change.
           limit_state = limits_get_state();
@@ -247,7 +253,6 @@ void limits_go_home(uint8_t cycle_mask)
             break;
           }
         }
-
       } while (STEP_MASK & axislock);
       st_reset(); // Immediately force kill steppers and reset step segment buffer.
       delay_ms(settings.homing_debounce_delay); // Delay to allow transient dynamics to dissipate.
