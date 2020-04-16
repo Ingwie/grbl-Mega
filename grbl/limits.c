@@ -178,7 +178,7 @@ void limits_go_home(uint8_t cycle_mask)
     do {
 #ifdef USE_STATUS_LED
       UpdateStatusLeds();
-#end
+#endif
       system_convert_array_steps_to_mpos(target,sys_position);
 
       // Initialize and declare variables needed for homing routine.
@@ -216,7 +216,7 @@ void limits_go_home(uint8_t cycle_mask)
       do {
 #ifdef USE_STATUS_LED
         UpdateStatusLeds();
-#end
+#endif
         if (approach) {
           // Check limit state. Lock out cycle axes when they change.
           limit_state = limits_get_state();

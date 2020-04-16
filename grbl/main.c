@@ -39,6 +39,7 @@ volatile uint8_t sys_rt_exec_accessory_override; // Global realtime executor bit
 
 int main(void)
 {
+  Power_Status = 0; // Power supply is OFF
   // Initialize system upon power-up.
   serial_init();   // Setup serial baud rate and interrupts
   settings_init(); // Load Grbl settings from EEPROM
